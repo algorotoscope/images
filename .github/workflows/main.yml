@@ -1,0 +1,120 @@
+name: Images  
+on: [push]
+jobs:
+  deploy_source:
+    name: Deploy API Using Lambda
+    strategy:
+      matrix:
+        node-version: [12.x]
+    runs-on: ubuntu-latest
+    steps:
+    
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install and build
+        run: |
+          npm ci
+          npm run build --if-present
+        env:
+          CI: true
+
+      - name: /images get lambda deploy zip
+        uses: kinlane/images@main
+        with:
+            args: zip -qq -r m-s-images-g.zip images/get/index.js node_modules
+      - name: image get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-east-1
+            function_name: m-s-images-g
+            zip_file: m-s-images-g.zip
+      - name: /images post lambda deploy zip
+        uses: kinlane/images@main
+        with:
+            args: zip -qq -r m-s-images-po.zip images/post/index.js node_modules
+      - name: image get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-east-1
+            function_name: m-s-images-po
+            zip_file: m-s-images-po.zip
+      - name: /images/{image_id} get lambda deploy zip
+        uses: kinlane/images@main
+        with:
+            args: zip -qq -r m-s-images-image-g.zip images/image_id/get/index.js node_modules
+      - name: image get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-east-1
+            function_name: m-s-images-image-g
+            zip_file: m-s-images-image-g.zip
+      - name: /images/{image_id} put lambda deploy zip
+        uses: kinlane/images@main
+        with:
+            args: zip -qq -r m-s-images-image-pu.zip images/image_id/put/index.js node_modules
+      - name: image get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-east-1
+            function_name: m-s-images-image-pu
+            zip_file: m-s-images-image-pu.zip
+      - name: /images/{image_id} delete lambda deploy zip
+        uses: kinlane/images@main
+        with:
+            args: zip -qq -r m-s-images-image-d.zip images/image_id/delete/index.js node_modules
+      - name: image get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-east-1
+            function_name: m-s-images-image-d
+            zip_file: m-s-images-image-d.zip          
+      - name: /images/{image_id}/tags get lambda deploy zip
+        uses: kinlane/images@main
+        with:
+            args: zip -qq -r m-s-images-image-tags-g.zip images/image_id/tags/get/index.js node_modules
+      - name: images get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-east-1
+            function_name: m-s-images-image-tags-g
+            zip_file: m-s-images-image-tags-g.zip
+      - name: /images/{image_id}/tags post lambda deploy zip
+        uses: kinlane/images@main
+        with:
+            args: zip -qq -r m-s-images-image-tags-po.zip images/image_id/tags/post/index.js node_modules
+      - name: images get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-east-1
+            function_name: m-s-images-image-tags-po
+            zip_file: m-s-images-image-tags-po.zip
+      - name: /images/bookmarklet get lambda deploy zip
+        uses: kinlane/images@main
+        with:
+            args: zip -qq -r m-s-imagesbookmarklet-g.zip images/bookmarklet/get/index.js node_modules
+      - name: images get lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+            aws_access_key_id: ${{secrets.AWS_ACCESS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_region: us-east-1
+            function_name: m-s-imagesbookmarklet-g
+            zip_file: m-s-imagesbookmarklet-g.zip  
+                      

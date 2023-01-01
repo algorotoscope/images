@@ -1,2 +1,2 @@
-# images
-This is an API for managing images.
+# Links
+These are the links that matter right now.
